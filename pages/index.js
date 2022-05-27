@@ -8,6 +8,7 @@ import { listGuestbookEntries } from "@/lib/fauna";
 import SuccessMessage from "@/components/SuccessMessage";
 import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import FlipCountdown from "@rumess/react-flip-countdown";
 
 const ENTRIES_PATH = "/api/entries";
 
@@ -145,10 +146,28 @@ const Guestbook = ({ initialEntries }) => {
   const { entries, onSubmit } = useEntriesFlow({
     initialEntries,
   });
+  function formatDate(date) {
+    var d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, parseInt(day) + 1].join("-");
+  }
 
   return (
     <main className="max-w-4xl min-h-screen  mx-auto p-4">
       <AppHead />
+      <FlipCountdown
+        hideYear
+        hideMonth
+        hideDay
+        endAtZero
+        endAt={formatDate(new Date())}
+      />
       <div
         className={cn(
           "border border-blue-200 rounded p-6",
