@@ -147,7 +147,7 @@ const Guestbook = ({ initialEntries }) => {
   });
 
   return (
-    <main className="max-w-4xl mx-auto p-4">
+    <main className="max-w-4xl min-h-screen  mx-auto p-4">
       <AppHead />
       <div
         className={cn(
