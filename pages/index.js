@@ -1,48 +1,49 @@
-import Head from 'next/head'
-import { useState } from 'react'
-import cn from 'classnames'
-import formatDate from 'date-fns/format'
-import useSWR, { mutate } from 'swr'
-import 'tailwindcss/tailwind.css'
-import { listGuestbookEntries } from '@/lib/fauna'
-import SuccessMessage from '@/components/SuccessMessage'
-import ErrorMessage from '@/components/ErrorMessage'
-import LoadingSpinner from '@/components/LoadingSpinner'
+import Head from "next/head";
+import { useState } from "react";
+import cn from "classnames";
+import formatDate from "date-fns/format";
+import useSWR, { mutate } from "swr";
+import "tailwindcss/tailwind.css";
+import { listGuestbookEntries } from "@/lib/fauna";
+import SuccessMessage from "@/components/SuccessMessage";
+import ErrorMessage from "@/components/ErrorMessage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-const ENTRIES_PATH = '/api/entries'
+const ENTRIES_PATH = "/api/entries";
 
 const putEntry = (payload) =>
   fetch(ENTRIES_PATH, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(payload),
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-  }).then((res) => (res.ok ? res.json() : Promise.reject(res)))
+  }).then((res) => (res.ok ? res.json() : Promise.reject(res)));
 
 const useEntriesFlow = ({ initialEntries }) => {
   const { data: entries } = useSWR(ENTRIES_PATH, {
     initialData: initialEntries,
-  })
+  });
 
   const onSubmit = async (payload) => {
-    await putEntry(payload)
-    await mutate(ENTRIES_PATH)
-  }
+    await putEntry(payload);
+    await mutate(ENTRIES_PATH);
+  };
 
   return {
     entries,
     onSubmit,
-  }
-}
+  };
+};
 
 const AppHead = () => (
   <Head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charSet="utf-8" />
+    <title>GuestBook Features</title>
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.png" />
   </Head>
-)
+);
 
 const EntryItem = ({ entry }) => (
   <div className="flex flex-col space-y-2">
@@ -55,30 +56,30 @@ const EntryItem = ({ entry }) => (
       </p>
     </div>
   </div>
-)
+);
 
 const EntryForm = ({ onSubmit: onSubmitProp }) => {
   const initial = {
-    name: '',
-    message: '',
-  }
-  const [values, setValues] = useState(initial)
-  const [formState, setFormState] = useState('initial')
-  const isSubmitting = formState === 'submitting'
+    name: "",
+    message: "",
+  };
+  const [values, setValues] = useState(initial);
+  const [formState, setFormState] = useState("initial");
+  const isSubmitting = formState === "submitting";
 
   const onSubmit = (ev) => {
-    ev.preventDefault()
+    ev.preventDefault();
 
-    setFormState('submitting')
+    setFormState("submitting");
     onSubmitProp(values)
       .then(() => {
-        setValues(initial)
-        setFormState('submitted')
+        setValues(initial);
+        setFormState("submitted");
       })
       .catch(() => {
-        setFormState('failed')
-      })
-  }
+        setFormState("failed");
+      });
+  };
 
   const makeOnChange =
     (fieldName) =>
@@ -86,44 +87,47 @@ const EntryForm = ({ onSubmit: onSubmitProp }) => {
       setValues({
         ...values,
         [fieldName]: value,
-      })
+      });
 
   const inputClasses = cn(
-    'block py-2 bg-white dark:bg-gray-800',
-    'rounded-md border-gray-300 focus:ring-blue-500',
-    'focus:border-blue-500 text-gray-900 dark:text-gray-100'
-  )
+    "block py-2 bg-white dark:bg-gray-800",
+    "rounded-md border-gray-300 focus:ring-blue-500",
+    "focus:border-blue-500 text-gray-900 dark:text-gray-100"
+  );
 
   return (
     <>
-      <form className="flex relative my-4" onSubmit={onSubmit}>
+      <form
+        className="flex flex-col md:flex-row  gap-2 relative my-4"
+        onSubmit={onSubmit}
+      >
         <input
           required
-          className={cn(inputClasses, 'w-1/3 mr-2 px-4')}
+          className={cn(inputClasses, "md:w-1/3 w-full mr-2 px-4")}
           aria-label="Your name"
           placeholder="Your name..."
           value={values.name}
-          onChange={makeOnChange('name')}
+          onChange={makeOnChange("name")}
         />
         <input
           required
-          className={cn(inputClasses, 'pl-4 pr-32 flex-grow')}
+          className={cn(inputClasses, "pl-4 pr-32 flex-grow")}
           aria-label="Your message"
           placeholder="Your message..."
           value={values.message}
-          onChange={makeOnChange('message')}
+          onChange={makeOnChange("message")}
         />
         <button
           className={cn(
-            'flex items-center justify-center',
-            'absolute right-1 top-1 px-4 font-bold h-8',
-            'bg-gray-100 dark:bg-gray-700 text-gray-900',
-            'dark:text-gray-100 rounded w-28'
+            "flex  items-center justify-center",
+            "relative md:absolute right-1 top-1 px-4 font-bold h-8",
+            "bg-yellow-600 dark:bg-gray-700 text-gray-100",
+            "dark:text-gray-100 rounded w-28"
           )}
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <LoadingSpinner /> : 'Sign'}
+          {isSubmitting ? <LoadingSpinner /> : "Sign"}
         </button>
       </form>
       {{
@@ -134,31 +138,31 @@ const EntryForm = ({ onSubmit: onSubmitProp }) => {
         ),
       }[formState]?.()}
     </>
-  )
-}
+  );
+};
 
 const Guestbook = ({ initialEntries }) => {
   const { entries, onSubmit } = useEntriesFlow({
     initialEntries,
-  })
+  });
 
   return (
     <main className="max-w-4xl mx-auto p-4">
       <AppHead />
       <div
         className={cn(
-          'border border-blue-200 rounded p-6',
-          'my-4 w-full dark:border-gray-800 bg-blue-50',
-          'dark:bg-blue-opaque'
+          "border border-blue-200 rounded p-6",
+          "my-4 w-full dark:border-gray-800 bg-blue-50",
+          "dark:bg-blue-opaque"
         )}
       >
         <h5
           className={cn(
-            'text-lg md:text-xl font-bold',
-            'text-gray-900 dark:text-gray-100'
+            "text-lg md:text-xl font-bold",
+            "text-gray-900 dark:text-gray-100"
           )}
         >
-          Sign the Guestbook
+          Sign the Guestbook and Leave a Message 💭
         </h5>
         <p className="my-1 text-gray-800 dark:text-gray-200">
           Share a message for a future visitor.
@@ -171,14 +175,14 @@ const Guestbook = ({ initialEntries }) => {
         ))}
       </div>
     </main>
-  )
-}
+  );
+};
 
 export const getStaticProps = async () => ({
   props: {
     initialEntries: await listGuestbookEntries(),
   },
   revalidate: 1,
-})
+});
 
-export default Guestbook
+export default Guestbook;
