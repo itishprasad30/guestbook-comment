@@ -1,10 +1,13 @@
 import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <ThemeProvider>
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <SessionProvider session={session}>
+      <ThemeProvider>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </SessionProvider>
   );
 }
 

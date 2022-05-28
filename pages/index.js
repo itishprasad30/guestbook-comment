@@ -10,7 +10,8 @@ import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import FlipCountdown from "@rumess/react-flip-countdown";
 import { useTheme } from "next-themes";
-import { FiMoon, FiSun } from "react-icons/fi";
+import { useSession, signIn, signOut } from "next-auth/react";
+
 const ENTRIES_PATH = "/api/entries";
 
 const putEntry = (payload) =>
@@ -149,6 +150,9 @@ const Guestbook = ({ initialEntries }) => {
   });
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const { data: session } = useSession();
+
   useEffect(() => setMounted(true), []);
 
   function formatDate(date) {
@@ -166,6 +170,7 @@ const Guestbook = ({ initialEntries }) => {
   return (
     <main className="max-w-4xl min-h-screen  mx-auto p-4">
       <AppHead />
+
       <FlipCountdown
         hideYear
         hideMonth
@@ -237,7 +242,21 @@ const Guestbook = ({ initialEntries }) => {
         <p className="my-1 text-gray-800 dark:text-gray-200">
           Share a message for a future visitor.
         </p>
-        <EntryForm onSubmit={onSubmit} />
+
+        {!session && (
+          <a
+            href="/api/auth/signin/github"
+            className="flex items-center justify-center my-4 font-bold h-8 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded w-28"
+            onClick={(e) => {
+              e.preventDefault();
+              signIn("github");
+            }}
+          >
+            Login
+          </a>
+        )}
+        {session?.user && <EntryForm onSubmit={onSubmit} />}
+        {session && <button onClick={() => signOut()}>logout</button>}
       </div>
       <div className="mt-4 space-y-8 px-2">
         {entries?.map((entry) => (
