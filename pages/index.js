@@ -209,8 +209,8 @@ const Guestbook = ({ initialEntries }) => {
       </div>
       <div
         className={cn(
-          "border border-blue-200 rounded p-6",
-          "my-4 w-full dark:border-gray-800 bg-blue-50",
+          "border border-yellow-200 rounded p-6",
+          "my-4 w-full dark:border-gray-800 bg-yellow-50",
           "dark:bg-blue-500"
         )}
       >
