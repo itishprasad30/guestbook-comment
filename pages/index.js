@@ -173,6 +173,9 @@ const Guestbook = ({ initialEntries }) => {
         endAtZero
         endAt={formatDate(new Date())}
       />
+      <h2 className="text-2xl font-serif flex justify-center">
+        Until Next Day
+      </h2>
       <div className="flex justify-end">
         <button
           aria-label="Toggle Dark Mode"
@@ -206,6 +209,15 @@ const Guestbook = ({ initialEntries }) => {
             </svg>
           )}
         </button>
+      </div>
+      <div className="flex flex-col justify-center items-start max-w-4xl mx-auto mb-16">
+        <h1 className="font-bold text-3xl md:text-5xl tracking-tight mb-4 ">
+          Guestbook
+        </h1>
+        <p className="text-gray-600 dark:text-gray-50 mb-4">
+          Leave a comment below. It could be anything – appreciation,
+          information, wisdom, or even humor. Surprise me!
+        </p>
       </div>
       <div
         className={cn(
