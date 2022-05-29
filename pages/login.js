@@ -25,7 +25,9 @@ const login = () => {
           Login
         </a>
       )}
+
       {session && <button onClick={() => signOut()}>logout</button>}
+
       {/* {!session && (
         <>
           Not signed in <br />

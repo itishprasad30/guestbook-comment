@@ -61,9 +61,9 @@ const EntryItem = ({ entry }) => (
   </div>
 );
 
-const EntryForm = ({ onSubmit: onSubmitProp }) => {
+const EntryForm = ({ onSubmit: onSubmitProp, name }) => {
   const initial = {
-    name: "",
+    name: name,
     message: "",
   };
   const [values, setValues] = useState(initial);
@@ -104,14 +104,14 @@ const EntryForm = ({ onSubmit: onSubmitProp }) => {
         className="flex flex-col md:flex-row  gap-2 relative my-4"
         onSubmit={onSubmit}
       >
-        <input
+        {/* <input
           required
           className={cn(inputClasses, "md:w-1/3 w-full mr-2 px-4")}
           aria-label="Your name"
           placeholder="Your name..."
           value={values.name}
           onChange={makeOnChange("name")}
-        />
+        /> */}
         <input
           required
           className={cn(inputClasses, "pl-4 pr-32 flex-grow")}
@@ -181,6 +181,7 @@ const Guestbook = ({ initialEntries }) => {
       <h2 className="text-2xl font-serif flex justify-center">
         Until Next Day
       </h2>
+      {/* Dark Mode Button */}
       <div className="flex justify-end">
         <button
           aria-label="Toggle Dark Mode"
@@ -255,8 +256,22 @@ const Guestbook = ({ initialEntries }) => {
             Login
           </a>
         )}
-        {session?.user && <EntryForm onSubmit={onSubmit} />}
-        {session && <button onClick={() => signOut()}>logout</button>}
+
+        {session?.user && (
+          <EntryForm name={session?.user?.name} onSubmit={onSubmit} />
+        )}
+
+        <p className="my-1 text-gray-800 dark:text-gray-200">
+          Your information is only used to display your name and reply by email.
+        </p>
+        {session && (
+          <button
+            className="my-1 text-gray-800 dark:text-gray-200"
+            onClick={() => signOut()}
+          >
+            logout
+          </button>
+        )}
       </div>
       <div className="mt-4 space-y-8 px-2">
         {entries?.map((entry) => (
